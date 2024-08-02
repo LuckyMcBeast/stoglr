@@ -17,6 +17,7 @@ func NewToggleRouter(datastore *datastore.RuntimeDatastore) *ToggleRouter {
 }
 
 func (tr *ToggleRouter) CreateRouter() *http.ServeMux {
+	tr.mux.handleFunc("GET /api/health", tr.getHealth)
 	tr.mux.handleFunc("GET /api/toggle", tr.getAll)
 	tr.mux.handleFunc("POST /api/toggle/{name}", tr.createOrGet)
 	tr.mux.handleFunc("PUT /api/toggle/{name}/enable", tr.enable)
@@ -24,6 +25,14 @@ func (tr *ToggleRouter) CreateRouter() *http.ServeMux {
 	tr.mux.handleFunc("PUT /api/toggle/{name}/execute/{executes}", tr.executes)
 	tr.mux.handleFunc("DELETE /api/toggle/{name}", tr.delete)
 	return tr.mux.getServeMux()
+}
+
+func (tr *ToggleRouter) getHealth(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("OK"))
+	if err != nil {
+		log.Println("Failed to write health check response: " + err.Error())
+	}
 }
 
 func (tr *ToggleRouter) getAll(w http.ResponseWriter, r *http.Request) {

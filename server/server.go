@@ -14,20 +14,16 @@ type ToggleServer struct {
 }
 
 func NewToggleServer(port string, datastore *datastore.RuntimeDatastore) *ToggleServer {
-	return &ToggleServer{Port: port, Datastore: datastore}
+	router := NewToggleRouter(datastore)
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: router.CreateRouter(),
+	}
+	return &ToggleServer{Port: port, Datastore: datastore, router: router, server: server}
 }
 
 func (t *ToggleServer) Start() {
 	log.Println("STOGLR: The Simple Feature Toggler")
-	if t.router == nil {
-		t.router = NewToggleRouter(t.Datastore)
-	}
-	if t.server == nil {
-		t.server = &http.Server{
-			Addr:    ":" + t.Port,
-			Handler: t.router.CreateRouter(),
-		}
-	}
 	log.Println("Starting STOGLR on port", t.Port)
 	log.Fatal(t.server.ListenAndServe())
 }
