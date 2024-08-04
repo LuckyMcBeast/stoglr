@@ -24,6 +24,6 @@ func NewToggleServer(port string, datastore *datastore.RuntimeDatastore) *Toggle
 
 func (t *ToggleServer) Start() {
 	log.Println("STOGLR: The Simple Feature Toggler")
-	log.Println("Starting STOGLR on port", t.Port)
+	log.Println("Starting STOGLR Server on port", t.Port)
 	log.Fatal(t.server.ListenAndServe())
 }
