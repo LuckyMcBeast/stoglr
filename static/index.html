@@ -2,45 +2,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="htmx.min.js"></script>
     <link rel="stylesheet" href="simple.min.css">
     <link rel="stylesheet" href="style.css">
-    <title>Stoglr</title>
+    <title>stoglr</title>
 </head>
 
 <html lang="en">
 <header>
     <h1 style="margin-bottom: 0; padding-top: 1rem;">stoglr</h1>
-    <h4 style="margin: 0">the simple feature toggle system</h4>
+    <h4 style="margin: 0">the simple feature toggler</h4>
 </header>
-<main>
+<main style="padding-bottom: 2rem">
     <h4>release</h4>
-    <table style="width: 100%">
+    <table>
         <thead>
         <tr>
             <th>name</th>
             <th>status</th>
-            <th>actions</th>
+            <th style="width: 25%">actions</th>
         </tr>
         </thead>
         <tbody>
-
+        {{range .Release}}
+        <tr id="{{.Name}}">
+            <td>{{.Name}}</td>
+            <td>{{.Status}}</td>
+            <td>
+                <button class="tbutton"
+                        hx-put="/api/toggle/{{.Name}}/change"
+                        hx-target="closest tr">toggle</button>
+                <button class="dbutton"
+                        hx-delete="/api/toggle/{{.Name}}"
+                        hx-target="closest tr">delete</button>
+            </td>
+        </tr>
+        {{ end }}
         </tbody>
     </table>
     <h4>ops</h4>
-    <table style="width: 100%">
+    <table>
         <thead>
         <tr>
             <th>name</th>
             <th>status</th>
-            <th>actions</th>
+            <th style="width: 25%">actions</th>
         </tr>
         </thead>
         <tbody>
-
+        {{range .Ops}}
+        <tr id="{{.Name}}">
+            <td>{{.Name}}</td>
+            <td>{{.Status}}</td>
+            <td>
+                <button class="tbutton"
+                        hx-put="/api/toggle/{{.Name}}/change"
+                        hx-target="closest tr">toggle</button>
+                <button class="dbutton"
+                        hx-delete="/api/toggle/{{.Name}}"
+                        hx-target="closest tr">delete</button>
+            </td>
+        </tr>
+        {{ end }}
         </tbody>
     </table>
     <h4>a/b</h4>
-    <table style="width: 100%">
+    <table>
         <thead>
         <tr >
             <th style="width: 25%">name</th>
@@ -50,11 +77,33 @@
         </tr>
         </thead>
         <tbody>
-
+        {{range .Ab}}
+        <tr id="{{.Name}}">
+            <td>{{.Name}}</td>
+            <td>{{.Status}}</td>
+            <td class="executes">
+                <form hx-put="/api/toggle/{{.Name}}/execute">
+                    <input type="text"
+                           name="executes"
+                           id="{{.Name}}-executes"
+                           placeholder="{{.Executes}}">
+                    <button>update</button>
+                </form>
+            </td>
+            <td>
+                <button class="tbutton"
+                        hx-put="/api/toggle/{{.Name}}/change"
+                        hx-target="closest tr">toggle</button>
+                <button class="dbutton"
+                        hx-delete="/api/toggle/{{.Name}}"
+                        hx-target="closest tr">delete</button>
+            </td>
+        </tr>
+        {{ end }}
         </tbody>
     </table>
     <a href="/">
-        <button>Refresh</button>
+        <button style="margin-top: 1rem">refresh</button>
     </a>
 </main>
 </html>

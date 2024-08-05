@@ -22,21 +22,17 @@ func (rd *RuntimeDatastore) CreateOrGetToggle(name string, toggleType string, ex
 	return *toggle
 }
 
-func (rd *RuntimeDatastore) EnableToggle(name string) model.Toggle {
+func (rd *RuntimeDatastore) ChangeToggle(name string) model.Toggle {
 	t, ok := rd.db[name]
 	if ok {
-		t.Status = model.ENABLED
-		rd.db[name] = t
-		return t
-	}
-	return *model.NotFound(name)
-}
-
-func (rd *RuntimeDatastore) DisableToggle(name string) model.Toggle {
-	t, ok := rd.db[name]
-	if ok {
-		t.Status = model.DISABLED
-		rd.db[name] = t
+		switch t.Status {
+		case model.ENABLED:
+			t.Status = model.DISABLED
+			rd.db[name] = t
+		case model.DISABLED:
+			t.Status = model.ENABLED
+			rd.db[name] = t
+		}
 		return t
 	}
 	return *model.NotFound(name)

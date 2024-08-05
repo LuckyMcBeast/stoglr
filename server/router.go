@@ -2,15 +2,44 @@ package server
 
 import (
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
+	"stoglr/model"
 	"stoglr/server/datastore"
 )
 
 type ToggleRouter struct {
 	datastore datastore.Datastore
 	mux       Mux
+}
+
+type ToggleTemplate struct {
+	Release []model.Toggle
+	Ops     []model.Toggle
+	Ab      []model.Toggle
+}
+
+func NewToggleTemplate(t []model.Toggle) *ToggleTemplate {
+	var r []model.Toggle
+	var o []model.Toggle
+	var a []model.Toggle
+	for i := range t {
+		switch t[i].ToggleType {
+		case model.RELEASE:
+			r = append(r, t[i])
+		case model.OPS:
+			o = append(o, t[i])
+		case model.AB:
+			a = append(a, t[i])
+		}
+	}
+	return &ToggleTemplate{
+		Release: r,
+		Ops:     o,
+		Ab:      a,
+	}
 }
 
 func NewToggleRouter(datastore *datastore.RuntimeDatastore) *ToggleRouter {
@@ -22,8 +51,8 @@ func (tr *ToggleRouter) CreateRouter() *http.ServeMux {
 	tr.mux.handleFunc("GET /api/health", tr.getHealth)
 	tr.mux.handleFunc("GET /api/toggle", tr.getAll)
 	tr.mux.handleFunc("POST /api/toggle/{name}", tr.createOrGet)
-	tr.mux.handleFunc("PUT /api/toggle/{name}/enable", tr.enable)
-	tr.mux.handleFunc("PUT /api/toggle/{name}/disable", tr.disable)
+	tr.mux.handleFunc("PUT /api/toggle/{name}/change", tr.change)
+	tr.mux.handleFunc("PUT /api/toggle/{name}/execute", tr.executes)
 	tr.mux.handleFunc("PUT /api/toggle/{name}/execute/{executes}", tr.executes)
 	tr.mux.handleFunc("DELETE /api/toggle/{name}", tr.delete)
 	return tr.mux.getServeMux()
@@ -31,10 +60,17 @@ func (tr *ToggleRouter) CreateRouter() *http.ServeMux {
 
 func (tr *ToggleRouter) setupUi() {
 	tr.mux.handleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		writeFile("static/index.html", "text/html; charset=utf-8", w)
+		tmpl := template.Must(template.ParseFiles("static/index.html"))
+		err := tmpl.Execute(w, NewToggleTemplate(tr.datastore.GetAllToggles()))
+		if err != nil {
+			log.Println(err)
+		}
 	})
 	tr.mux.handleFunc("GET /simple.min.css", func(w http.ResponseWriter, r *http.Request) {
 		writeFile("static/simple.min.css", "text/css; charset=utf-8", w)
+	})
+	tr.mux.handleFunc("GET /style.css", func(w http.ResponseWriter, r *http.Request) {
+		writeFile("static/style.css", "text/css; charset=utf-8", w)
 	})
 	tr.mux.handleFunc("GET /htmx.min.js", func(w http.ResponseWriter, r *http.Request) {
 		writeFile("static/htmx.min.js", "text/javascript; charset=utf-8", w)
@@ -49,8 +85,19 @@ func (tr *ToggleRouter) getHealth(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func (tr *ToggleRouter) getAll(w http.ResponseWriter, _ *http.Request) {
-	writeToJson(w, tr.datastore.GetAllToggles())
+func (tr *ToggleRouter) getAll(w http.ResponseWriter, r *http.Request) {
+	a := r.Header.Get("Accept")
+	println(a)
+	switch a {
+	case "application/json":
+		writeToJson(w, tr.datastore.GetAllToggles())
+	default:
+		tmpl := template.Must(template.ParseFiles("static/template.html"))
+		err := tmpl.Execute(w, struct{ Toggles []model.Toggle }{tr.datastore.GetAllToggles()})
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }
 
 func (tr *ToggleRouter) createOrGet(w http.ResponseWriter, r *http.Request) {
@@ -61,19 +108,18 @@ func (tr *ToggleRouter) createOrGet(w http.ResponseWriter, r *http.Request) {
 	writeToJson(w, tr.datastore.CreateOrGetToggle(name, toggleType, executes))
 }
 
-func (tr *ToggleRouter) enable(w http.ResponseWriter, r *http.Request) {
+func (tr *ToggleRouter) change(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
-	writeToJson(w, tr.datastore.EnableToggle(name))
-}
-
-func (tr *ToggleRouter) disable(w http.ResponseWriter, r *http.Request) {
-	name := r.PathValue("name")
-	writeToJson(w, tr.datastore.DisableToggle(name))
+	writeToJson(w, tr.datastore.ChangeToggle(name))
 }
 
 func (tr *ToggleRouter) executes(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
-	strExe := r.PathValue("executes")
+	_ = r.ParseForm()
+	strExe := r.Form.Get("executes")
+	if strExe == "" {
+		strExe = r.PathValue("executes")
+	}
 	writeToJson(w, tr.datastore.SetExecution(name, strExe))
 }
 

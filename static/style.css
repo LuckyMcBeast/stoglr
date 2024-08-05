@@ -1,3 +1,37 @@
-th {
+th, td {
     text-align: center;
+}
+table {
+    width: 100%;
+}
+button {
+    margin: 0;
+    --accent: #17899d;
+    --accent-hover: #116776;
+    --accent-text: white;
+}
+.dbutton {
+    --accent-hover: #9d2b17;
+    --accent: #c4361d;
+    --accent-text: white;
+}
+.tbutton {
+    --accent-hover: #0f7a1f;
+    --accent: #149e29;
+    --accent-text: white;
+}
+.executes {
+    display: flex;
+    gap: 0.25rem;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+}
+.executes > form {
+    margin: 0;
+    text-align: center;
+    padding-top: 0.25rem;
+}
+input {
+    width: 30%
 }

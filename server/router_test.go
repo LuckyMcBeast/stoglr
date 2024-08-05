@@ -42,10 +42,10 @@ var createRouterTestCases = []struct {
 	},
 	{
 		name:            "Enable",
-		url:             "/api/toggle/test1/enable",
+		url:             "/api/toggle/test1/change",
 		method:          http.MethodPut,
-		expectedPattern: "PUT /api/toggle/{name}/enable",
-		expectedHandler: tr.enable,
+		expectedPattern: "PUT /api/toggle/{name}/change",
+		expectedHandler: tr.change,
 	},
 	{
 		name:            "Disable",
