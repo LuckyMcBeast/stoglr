@@ -101,3 +101,30 @@ func keepWithinRange(executes int) int {
 		return executes
 	}
 }
+
+type TogglesByType struct {
+	Release []Toggle
+	Ops     []Toggle
+	Ab      []Toggle
+}
+
+func NewTogglesByType(t []Toggle) *TogglesByType {
+	var r []Toggle
+	var o []Toggle
+	var a []Toggle
+	for i := range t {
+		switch t[i].ToggleType {
+		case RELEASE:
+			r = append(r, t[i])
+		case OPS:
+			o = append(o, t[i])
+		case AB:
+			a = append(a, t[i])
+		}
+	}
+	return &TogglesByType{
+		Release: r,
+		Ops:     o,
+		Ab:      a,
+	}
+}

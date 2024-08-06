@@ -31,10 +31,12 @@
             <td>
                 <button class="tbutton"
                         hx-put="/api/toggle/{{.Name}}/change"
-                        hx-target="closest tr">toggle</button>
+                        hx-target="#{{.Name}}"
+                        hx-swap="outerHTML">toggle</button>
                 <button class="dbutton"
                         hx-delete="/api/toggle/{{.Name}}"
-                        hx-target="closest tr">delete</button>
+                        hx-target="#{{.Name}}"
+                        hx-swap="outerHTML">delete</button>
             </td>
         </tr>
         {{ end }}
@@ -57,10 +59,12 @@
             <td>
                 <button class="tbutton"
                         hx-put="/api/toggle/{{.Name}}/change"
-                        hx-target="closest tr">toggle</button>
+                        hx-target="#{{.Name}}"
+                        hx-swap="outerHTML">toggle</button>
                 <button class="dbutton"
                         hx-delete="/api/toggle/{{.Name}}"
-                        hx-target="closest tr">delete</button>
+                        hx-target="#{{.Name}}"
+                        hx-swap="outerHTML">delete</button>
             </td>
         </tr>
         {{ end }}
@@ -82,7 +86,10 @@
             <td>{{.Name}}</td>
             <td>{{.Status}}</td>
             <td class="executes">
-                <form hx-put="/api/toggle/{{.Name}}/execute">
+                <form hx-put="/api/toggle/{{.Name}}/execute"
+                      hx-target="#{{.Name}}"
+                      hx-swap="outerHTML"
+                >
                     <input type="text"
                            name="executes"
                            id="{{.Name}}-executes"
@@ -93,10 +100,12 @@
             <td>
                 <button class="tbutton"
                         hx-put="/api/toggle/{{.Name}}/change"
-                        hx-target="closest tr">toggle</button>
+                        hx-target="#{{.Name}}"
+                        hx-swap="outerHTML">toggle</button>
                 <button class="dbutton"
                         hx-delete="/api/toggle/{{.Name}}"
-                        hx-target="closest tr">delete</button>
+                        hx-target="#{{.Name}}"
+                        hx-swap="outerHTML">delete</button>
             </td>
         </tr>
         {{ end }}

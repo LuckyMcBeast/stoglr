@@ -1,0 +1,34 @@
+package model
+
+import "strconv"
+
+templ ToggleHtml(t *Toggle) {
+    <tr id={ t.Name }>
+        <td>{ t.Name }</td>
+        <td>{ string(t.Status) }</td>
+    if t.ToggleType == AB {
+        <td class="executes">
+            <form hx-put={ "/api/toggle/" + t.Name + "/execute" }
+                  hx-target={ "#" + t.Name }
+                  hx-swap="outerHTML"
+            >
+                <input type="text"
+                       name="executes"
+                       id={ t.Name + "-executes" }
+                       placeholder={ strconv.Itoa(t.Executes) }>
+                <button>update</button>
+            </form>
+        </td>
+        }
+    <td>
+        <button class="tbutton"
+             hx-put={ "/api/toggle/" + t.Name + "/change" }
+             hx-target={ "#" + t.Name }
+             hx-swap="outerHTML">toggle</button>
+        <button class="dbutton"
+             hx-delete={ "/api/toggle/" + t.Name }
+             hx-target={ "#" + t.Name }
+             hx-swap="outerHTML">delete</button>
+        </td>
+    </tr>
+}
