@@ -1,13 +1,40 @@
-### Example of Standard Toogle (Release Toggle)
+// Send request directly from this file within VS Code using REST Client extension.
+// https://open-vsx.org/extension/humao/rest-client
+
+### Health Check Endpoint
+
+GET http://localhost:8080/api/health
+
+
+### Example creating a Release Toogle
 # The same request can be used to get a toggle.
 
 POST http://localhost:8080/api/toggle/test_toggle
 
-### Example of an Operations Toggle
+### Example of creating an Operations Toggle
+# The same request can be used to get a toggle.
 
 POST http://localhost:8080/api/toggle/test_toggle1?type=ops
 
 
-###
+### Example of creating an AB Toggle
+# The same request can be used to get a toggle.
 
 POST http://localhost:8080/api/toggle/test_toggle2?type=ab&executes=50
+
+
+### Example of enabling/disabling a toggle
+
+PUT http://localhost:8080/api/toggle/test_toggle/change
+
+### Example of deleting a toggle
+# Note that the an active toggle within a client project will recreate the toggle
+# if left within the code.
+
+DELETE http://localhost:8080/api/toggle/test_toggle
+
+### Example of updating the execution percentage for an AB Toggle
+# 0 to 100 are valid values and correlate to their respective percentages.
+# For example, a value of 50 would mean the toggle is executed at 50% chance.
+
+PUT http://localhost:8080/api/toggle/test_toggle2/execute/10
