@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"stoglr/model"
+	"github.com/LuckyMcbeast/stoglr/model"
 )
 
 type Datastore interface {

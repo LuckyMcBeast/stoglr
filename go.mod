@@ -1,10 +1,9 @@
-module stoglr
+module github.com/LuckyMcbeast/stoglr
 
-go 1.22
-
-require github.com/steinfletcher/apitest v1.5.16
+go 1.24
 
 require (
-	github.com/a-h/templ v0.2.747 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/a-h/templ v0.3.857
+	github.com/davecgh/go-spew v1.1.1
+	github.com/steinfletcher/apitest v1.5.16
 )

@@ -1,9 +1,9 @@
 package server
 
 import (
+	"github.com/LuckyMcbeast/stoglr/server/datastore"
 	"log"
 	"net/http"
-	"stoglr/server/datastore"
 )
 
 type ToggleServer struct {

@@ -1,11 +1,11 @@
 package server
 
 import (
+	"github.com/LuckyMcbeast/stoglr/server/datastore"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/steinfletcher/apitest"
 	"io"
 	"net/http"
-	"stoglr/server/datastore"
 	"testing"
 )
 
@@ -49,10 +49,10 @@ var createRouterTestCases = []struct {
 	},
 	{
 		name:            "Disable",
-		url:             "/api/toggle/test3/disable",
+		url:             "/api/toggle/test3/change",
 		method:          http.MethodPut,
-		expectedPattern: "PUT /api/toggle/{name}/disable",
-		expectedHandler: tr.disable,
+		expectedPattern: "PUT /api/toggle/{name}/change",
+		expectedHandler: tr.change,
 	},
 	{
 		name:            "Set Executes",

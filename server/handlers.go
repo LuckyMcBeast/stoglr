@@ -3,11 +3,11 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"github.com/LuckyMcbeast/stoglr/model"
 	"github.com/a-h/templ"
 	"log"
 	"net/http"
 	"os"
-	"stoglr/model"
 )
 
 type Handler struct {

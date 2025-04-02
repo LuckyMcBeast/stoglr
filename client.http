@@ -1,0 +1,13 @@
+### Example of Standard Toogle (Release Toggle)
+# The same request can be used to get a toggle.
+
+POST http://localhost:8080/api/toggle/test_toggle
+
+### Example of an Operations Toggle
+
+POST http://localhost:8080/api/toggle/test_toggle1?type=ops
+
+
+###
+
+POST http://localhost:8080/api/toggle/test_toggle2?type=ab&executes=50

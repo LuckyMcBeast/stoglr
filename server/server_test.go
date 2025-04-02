@@ -1,9 +1,9 @@
 package server
 
 import (
+	"github.com/LuckyMcbeast/stoglr/server/datastore"
 	"io"
 	"net/http"
-	"stoglr/server/datastore"
 	"sync"
 	"testing"
 )

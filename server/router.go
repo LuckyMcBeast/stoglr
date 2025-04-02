@@ -1,11 +1,11 @@
 package server
 
 import (
+	"github.com/LuckyMcbeast/stoglr/model"
+	"github.com/LuckyMcbeast/stoglr/server/datastore"
 	"html/template"
 	"log"
 	"net/http"
-	"stoglr/model"
-	"stoglr/server/datastore"
 )
 
 type ToggleRouter struct {

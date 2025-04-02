@@ -1,8 +1,8 @@
 package datastore
 
 import (
+	"github.com/LuckyMcbeast/stoglr/model"
 	"reflect"
-	"stoglr/model"
 	"testing"
 )
 
@@ -77,7 +77,7 @@ func TestRuntimeDatastore_EnableToggle(t *testing.T) {
 				Executes:   100,
 			}
 
-			actual := rd.EnableToggle(tt.toggleName)
+			actual := rd.ChangeToggle(tt.toggleName)
 
 			if actual != tt.expected {
 				t.Errorf("expected: %v, actual: %v", tt.expected, actual)
@@ -114,7 +114,7 @@ func TestRuntimeDatastore_DisableToggle(t *testing.T) {
 				Executes:   100,
 			}
 
-			actual := rd.DisableToggle(tt.toggleName)
+			actual := rd.ChangeToggle(tt.toggleName)
 
 			if actual != tt.expected {
 				t.Errorf("expected: %v, actual: %v", tt.expected, actual)
