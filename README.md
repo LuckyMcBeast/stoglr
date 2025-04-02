@@ -33,7 +33,7 @@ will need to re-enable toogles after the appliation restarts.
 
 ### <a name="design"></a> Design Principles
 
-This system was built with the follow design requirements in mind:
+This system was built with the following design requirements in mind:
 
 - should be easy for developers to use
 - should be very fast as to not slow down regular operations
