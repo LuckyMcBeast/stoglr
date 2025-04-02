@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"github.com/LuckyMcbeast/stoglr/model"
+	"github.com/LuckyMcBeast/stoglr/model"
 )
 
 type RuntimeDatastore struct {

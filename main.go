@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/LuckyMcbeast/stoglr/server"
-	"github.com/LuckyMcbeast/stoglr/server/datastore"
+	"github.com/LuckyMcBeast/stoglr/server"
+	"github.com/LuckyMcBeast/stoglr/server/datastore"
 )
 
 var (

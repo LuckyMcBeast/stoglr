@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/LuckyMcbeast/stoglr/server/datastore"
+	"github.com/LuckyMcBeast/stoglr/server/datastore"
 	"log"
 	"net/http"
 )

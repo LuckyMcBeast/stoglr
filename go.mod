@@ -1,4 +1,4 @@
-module github.com/LuckyMcbeast/stoglr
+module github.com/LuckyMcBeast/stoglr
 
 go 1.24
 

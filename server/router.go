@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/LuckyMcbeast/stoglr/model"
-	"github.com/LuckyMcbeast/stoglr/server/datastore"
+	"github.com/LuckyMcBeast/stoglr/model"
+	"github.com/LuckyMcBeast/stoglr/server/datastore"
 	"html/template"
 	"log"
 	"net/http"

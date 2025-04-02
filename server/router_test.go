@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/LuckyMcbeast/stoglr/server/datastore"
+	"github.com/LuckyMcBeast/stoglr/server/datastore"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/steinfletcher/apitest"
 	"io"
