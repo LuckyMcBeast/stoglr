@@ -14,7 +14,7 @@ generate-templ:
 run:
 	./${BINARY}
 test:
-	go test ./... -coverprofile=coverage.txt
+	go test ./... -coverprofile=coverage.out
 vet:
 	go vet ./...
 fmt:

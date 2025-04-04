@@ -1,2 +1,5 @@
 .idea
 *_templ.go
+go.sum
+stoglr
+coverage.out
