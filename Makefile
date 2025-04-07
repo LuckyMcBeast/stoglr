@@ -1,12 +1,14 @@
-BINARY="stoglr"
+BINARY=stoglr
 VERSION=`git describe --tags`
 BUILD=`date +%FT%T%z`
 LDFLAGS=-ldflags "-X main.versionValue=${VERSION} -X main.buildTime=${BUILD}"
 
 build: generate-templ build-pkg
 
-check: build test vet
+check: generate-templ build-no-flags test vet
 
+build-no-flags:
+	go build -o ${BINARY}-no-flags
 build-pkg:
 	go build ${LDFLAGS} -o ${BINARY}
 generate-templ:
@@ -20,4 +22,4 @@ vet:
 fmt:
 	go fmt ./...
 clean:
-	rm -rf ${BINARY} coverage.out
+	rm -rf ${BINARY} ${BINARY}-no-flags coverage.out
