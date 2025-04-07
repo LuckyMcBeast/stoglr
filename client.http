@@ -6,6 +6,9 @@
 GET http://localhost:8080/api/health
 
 
+### Get All Toggles
+GET http://localhost:8080/api/toggle
+
 ### Example creating a Release Toogle
 # The same request can be used to get a toggle.
 

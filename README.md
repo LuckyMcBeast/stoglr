@@ -106,11 +106,14 @@ In the future, the preferred method of creating toggles will be through the appr
 
 To enable or disable a toggle, you can either use the UI, or interact with the server's api via a REST client (example calls can be found <a href="client.http">here</a>).
 
-### <a name="client"></a> Client Libraries (WIP)
+### <a name="client"></a> Client Libraries/SDKs (WIP)
 
-Currently, no client libraries exist for stoglr, however, the plan is to support the following languages (more may be added in the future):
+Currently, stoglr has client libraries for the following languages:
 
-- Go
+- Go (Found in the stoglr module under lib)
+
+We also plan to support the following languages (more may be added in the future):
+
 - Java
 - Kotlin
 - Rust

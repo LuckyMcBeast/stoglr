@@ -1,10 +1,12 @@
 package lib
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"net/http"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/LuckyMcBeast/stoglr/model"
 	"github.com/LuckyMcBeast/stoglr/server"
@@ -74,15 +76,15 @@ func TestStoglrClient_reqUrl(t *testing.T) {
 	}
 }
 
-type belowFifty struct {}
+type belowFifty struct{}
 
 func (b belowFifty) randomNumber() int {
 	return rand.IntN(49) + 1
 }
 
-type aboveFifty struct {}
+type aboveFifty struct{}
 
-func  (a aboveFifty) randomNumber() int {
+func (a aboveFifty) randomNumber() int {
 	return rand.IntN(51) + 49
 }
 
@@ -95,7 +97,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "should create release toggle",
+			name:   "should create release toggle",
 			client: NewStoglrClient("http://localhost:4444"),
 			stoglr: Stoglr{
 				ToggleName: "test-toggle1",
@@ -105,7 +107,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "should create AB toggle",
+			name:   "should create AB toggle",
 			client: &StoglrClient{Url: "http://localhost:4444", client: &http.Client{}, random: belowFifty{}},
 			stoglr: Stoglr{
 				ToggleName: "test-toggle2",
@@ -115,7 +117,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "should create another AB toggle",
+			name:   "should create another AB toggle",
 			client: &StoglrClient{Url: "http://localhost:4444", client: &http.Client{}, random: aboveFifty{}},
 			stoglr: Stoglr{
 				ToggleName: "test-toggle2-another",
@@ -125,7 +127,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "should create OPs toggle",
+			name:   "should create OPs toggle",
 			client: NewStoglrClient("http://localhost:4444"),
 			stoglr: Stoglr{
 				ToggleName: "test-toggle3",
@@ -135,7 +137,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "should get release toggle as enabled",
+			name:   "should get release toggle as enabled",
 			client: NewStoglrClient("http://localhost:4444"),
 			stoglr: Stoglr{
 				ToggleName: "test-toggle1",
@@ -145,7 +147,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "should get AB toggle as enabled when random number is below executes",
+			name:   "should get AB toggle as enabled when random number is below executes",
 			client: &StoglrClient{Url: "http://localhost:4444", client: &http.Client{}, random: belowFifty{}},
 			stoglr: Stoglr{
 				ToggleName: "test-toggle2",
@@ -155,7 +157,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "should get AB toggle as disabled when random number is above executes",
+			name:   "should get AB toggle as disabled when random number is above executes",
 			client: &StoglrClient{Url: "http://localhost:4444", client: &http.Client{}, random: aboveFifty{}},
 			stoglr: Stoglr{
 				ToggleName: "test-toggle2-another",
@@ -165,7 +167,7 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "should get OPS toggle as enabled",
+			name:   "should get OPS toggle as enabled",
 			client: NewStoglrClient("http://localhost:4444"),
 			stoglr: Stoglr{
 				ToggleName: "test-toggle3",
@@ -195,6 +197,50 @@ func TestStoglrClient_IsEnabled(t *testing.T) {
 		}
 		db.ChangeToggle(tt.stoglr.ToggleName)
 	}
+	wg.Done()
+}
+
+func TestStoglrClient_IsEnabled_WithToggleInLocalStore(t *testing.T) {
+	toggle := model.Toggle{Name: "test-toggle5", Status: model.ENABLED, ToggleType: model.OPS, Executes: 100}
+	client := &StoglrClient{
+		Url:    "http://localhost:4444",
+		client: &http.Client{},
+		random: realRandom{},
+		tStore: []model.Toggle{toggle}}
+	stoglr := Stoglr{
+		ToggleName: "test-toggle5",
+		ToggleType: model.OPS,
+		Executes:   100,
+	}
+
+	actual := client.IsEnabled(&stoglr)
+
+	if actual != true {
+		t.Errorf("got %v, want %v", actual, true)
+	}
+}
+
+func TestStoglrClient_PollToggles(t *testing.T) {
+	port := "4445"
+	db := datastore.NewRuntimeDatastore()
+	ts := *server.NewToggleServer(port, db)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go serverRunner(&ts, &wg)
+
+	client := NewStoglrClientWithPollInterval("http://localhost:4445", 1*time.Millisecond)
+	channel := client.PollToggles()
+	store := &client.tStore
+	if len(*store) != 0 {
+		t.Errorf("got %v, want empty slice", store)
+	}
+	db.CreateOrGetToggle("toggle1", string(model.RELEASE), "100")
+	time.Sleep(4 * time.Millisecond)
+	fmt.Printf("store: %v\n", *store)
+	if len(*store) != 1 {
+		t.Errorf("got %v, want slice with one toggle", *store)
+	}
+	close(channel)
 	wg.Done()
 }
 

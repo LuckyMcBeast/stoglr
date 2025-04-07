@@ -20,4 +20,4 @@ vet:
 fmt:
 	go fmt ./...
 clean:
-	rm -rf ${BINARY} coverage.txt
+	rm -rf ${BINARY} coverage.out
