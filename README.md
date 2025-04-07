@@ -10,9 +10,10 @@ A feature toggling system written in Go, designed to be fast, lightweight, and a
     - [Supported Toggle Types](#types)
 - [Usage](#usage)
     - [Starting the Server](#start)
+    - [A note on Security](#security)
+    - [Client Libraries/SDKs (WIP)](#client)
     - [Creating a Toggle](#create)
     - [Enabling and disabling a toggle](#lib-endis)
-    - [Client Libraries (Coming Soon...)](#client)
     - [Managing Toggles with UI](#ui)
     - [Using the API to manage toggles](#api)
 
@@ -26,7 +27,7 @@ system.
 
 This system consists of two primary parts:
 - Server application: maintains the state of toggles, acts as a basic CRUD application with a basic UI
-- Client libraries: exposes the only necessary function for using the system with another code base (Not Yet Implemented)
+- Client libraries/SDKs: exposes the only necessary function for using the system with another code base (WIP)
 
 By default (and as the only option currently), the system utilizes a runtime, in-memory datastore. This is perfectly acceptable for most situations, with the caviote that you
 will need to re-enable toogles after the appliation restarts.
@@ -93,18 +94,9 @@ Usage: stoglr [options]
   -v    Show version (exclusive with other options)
 ```
 
+### <a name="security"></a> A note on security
 
-### <a name="create"></a> Creating a Toggle
-
-Currently, creating a new toggle is done through an HTTP POST request to `/api/toggle/{name}` where `{name}` is the name of your toggle. You can specify additional parameters in the query string:
-- type: The type of toggle you want to create (RELEASE, OPS or AB). Defaults to RELEASE if not specified.
-- executes: This parameter only applies for AB toggles and specifies how many times the experiment should run. It's an integer value.
-
-In the future, the preferred method of creating toggles will be through the appropriate client library for your programming language of choice.
-
-### <a name="lib-endis"></a> Enabling and disabling a toggle
-
-To enable or disable a toggle, you can either use the UI, or interact with the server's api via a REST client (example calls can be found <a href="client.http">here</a>).
+This application has no authentication or authorization mechanism built in. It is meant to be used behind a secure network and not exposed directly to the internet.
 
 ### <a name="client"></a> Client Libraries/SDKs (WIP)
 
@@ -120,9 +112,9 @@ We also plan to support the following languages (more may be added in the future
 - Python
 - Javascript
 
-The client libraries are a critical part of this system and they will provide the appropriate usage. **stoglr is not consider production ready for your language until a library is available. That is not the only factor that determines production-readiness, but it is a major one. Using it without a library is not recommended.**
+The client libraries are a critical part of this system as they provide it's appropriate usage. **stoglr is not consider production ready for your language until a library is available. That is not the only factor that determines production-readiness, but it is a major one. Using it without a library is not recommended.**
 
-Generally, the library will at least one exposed method for usage:
+Generally, the libraries expose at least one exposed method for usage:
  
  - `isEnabled(toggleName: string, type: string = 'release', executes: number = 100)`:
  This method should return a boolean indicating whether or not the toggle is enabled. Under the hood, this also creates the toggle specified in the code, elimating the need to manually create them and allowing them to be restored if stoglr is restarted. Enums will be used for the `type` parameter where appropriate. `executes` parameter will be ignored (or set back to 100) for non-AB type toggles.
@@ -140,9 +132,33 @@ withToggle(
     }
 ```
 
-The client library will poll for updates every few seconds to check if any changes have been made to the state of any of the toggles. This polling can be disabled or adjusted to a lower frequency if desired, but is generally recommended and is enabled by default.
+Additionally, the client libraries support a polling feature that checks for updates every few seconds to see if any changes have been made to the state of any of the toggles. This feature is optional and can be adjusted to a lower frequency if desired. It is generally recommended.
 
  Setup and configuration will depend on the language in question.
+
+### <a name="create"></a> Creating a Toggle
+
+The preferred method for creating a new toggle is by using client library for your chosen programming language. The IsEnabled method operates as both to get existing toggles and to create new ones if they don't exist yet.
+
+For example, in Go it would look like this:
+
+```go
+  s := lib.NewStoglrClient(url)
+
+  if(s.IsEnabled(ReleaseToggle("myToggle"))) {
+    fmt.Println("Toggle is enabled")
+  } else {
+    fmt.Println("Toggle is disabled")
+  }
+```
+
+For other languages that aren't yet supported by our libraries, creating a new toggle is done through an HTTP POST request to `/api/toggle/{name}` where `{name}` is the name of your toggle **(not recommmended for production use)**. You can specify additional parameters in the query string:
+- type: The type of toggle you want to create (RELEASE, OPS or AB). Defaults to RELEASE if not specified.
+- executes: This parameter only applies for AB toggles and specifies how many times the experiment should run. It's an integer value. Defaults to 100 if not specified.
+
+### <a name="lib-endis"></a> Enabling and disabling a toggle
+
+To enable or disable a toggle, you can either use the UI, or interact with the server's api via a REST client (example calls can be found <a href="client.http">here</a>).
 
 ### <a name="ui"></a> Using the UI to manage toggles
 
@@ -161,13 +177,11 @@ The update button for execution percentage modifies the percentage chance of the
 For example, 100% will execute every time, 50% will execute half the time, and 0% will never execute. This feature is for A/B toggle functionality.
 
 ##### FAQs
-(Functionality of the client library, not yet implemented)
-- Don't see your toggle? This may be because the toggle has not been triggered yet within the code. Trigger it and then
-  hit the refresh button.
-- Oh no, you deleted a toggle that you needed! Don't worry. If the toggle is still in place within the code, it will be
-  recreated in the disabled state once triggered.
+- Don't see your toggle? This may be because the toggle has not been triggered yet within the code. Trigger it and then hit the refresh button.
+- Oh no, you deleted a toggle that you needed! Don't worry. If the toggle is still in place within the code, it will be recreated in the disabled state once triggered.
 
 ### <a name="api"></a> Using the API to manage toggles 
 
 To interact with the server, please see the see our the example calls [here](client.http).
+
 
